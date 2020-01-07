@@ -1,3 +1,13 @@
 steps:
   - checkout: none
-  - script: echo trigger1
+  - script: echo "" > dummy.txt
+  # required to cause pipeline triggering downstream
+  - task: CopyFiles@2
+    inputs:
+      contents: $(System.DefaultWorkingDirectory)/**
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: $(Build.ArtifactStagingDirectory)
+      artifactName: dummy-$(Build.BuildId)
+      publishLocation: Container
